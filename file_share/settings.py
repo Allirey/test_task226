@@ -48,9 +48,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'file_share.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "test_db",
+        "USER": "test_user",
+        "PASSWORD": "test_test",
+        "HOST": "db",
+        "PORT": 5432
     }
 }
 
