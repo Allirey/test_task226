@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}File upload{% endblock %}
+
+{% block body %}
+    {% if form %}
+        <form method="post" action="." enctype="multipart/form-data" id="upload">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <input type="submit">
+        </form>
+    {% endif %}
+
+    <div id="success-upload"></div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(document).ready(function () {
+            $("#upload").submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+
+                        let div = document.getElementById('success-upload');
+                        div.innerHTML = '';
+                        $('#upload')[0].reset();
+
+                        if (!response.error) {
+
+                            div.innerHTML += `
+
+                        <br>File successfully uploaded!
+                        <br>direct link to download file: http://{{ request.get_host }}${response.url}<br>
+
+                        <br>Click <a href="/files/${response.id}">here</a> for details.
+                        `
+                        } else {
+                            div.innerHTML += `<br>File upload failed.<br>${response.msg}`
+                        }
+                    },
+                    error: function (response) {
+                        alert(response["responseJSON"]["error"]);
+                    }
+                })
+            })
+        })
+    </script>
+{% endblock %}

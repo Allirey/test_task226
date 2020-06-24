@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+  backend:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./media/:/code/media/
+      - ./db.sqlite3:/code/db.sqlite3
+    ports:
+      - 80:8000
+    depends_on:
+      - rabbitmq
+      - celery_worker
+  celery_worker:
+    build: .
+    restart: on-failure
+    command: celery -A file_share worker -l info
+    ports: []
+    volumes:
+      - ./db.sqlite3:/code/db.sqlite3
+    depends_on:
+      - rabbitmq
+  celery_beat:
+    build: .
+    restart: on-failure
+    command: celery -A file_share beat -l info
+    ports: []
+    volumes:
+      - ./db.sqlite3:/code/db.sqlite3
+    depends_on:
+      - rabbitmq
+  rabbitmq:
+    image: rabbitmq:3.7.15-alpine

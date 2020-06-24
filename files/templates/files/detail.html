@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load tz %}
+
+{% block title %}File detail{% endblock %}
+
+{% block body %}
+
+    Your link to download file: <a href="http://{{ request.get_host }}/media/{{ file.file }}" download>http://{{ request.get_host }}/media/{{ file.file }}</a>
+    <br>
+    {% timezone "Europe/Kiev" %}
+    File expires at {{ file.expires | localtime }}
+    {% endtimezone %}
+    <br><br>
+
+    return to <a href="{% url "upload" %}">upload page</a>.
+
+{% endblock %}
